@@ -1,16 +1,78 @@
 <!DOCTYPE html>
-
 <html>
-
 <head>
-	<link rel="stylesheet" href="./styles.css">
+  <title>Shopping Cart</title>
 </head>
-
 <body>
-	<!-- the entire body must be written by student -->
-    <script type="text/javascript" src="./script.js">
-</script>
+  <h1>Shopping Cart</h1>
+  <div id="cart">
+    <h2>Your Cart</h2>
+    <ul id="cart-items">
+      <!-- Cart items will be displayed here -->
+    </ul>
+  </div>
+  <div id="products">
+    <h2>Available Products</h2>
+    <ul>
+      <li data-name="Item 1" data-price="10">Item 1 - $10</li>
+      <li data-name="Item 2" data-price="15">Item 2 - $15</li>
+      <li data-name="Item 3" data-price="20">Item 3 - $20</li>
+    </ul>
+  </div>
+  <script>
+    // Function to add an item to the cart
+    function addItemToCart(name, price) {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.push({ name, price });
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCart();
+    }
 
+    // Function to remove an item from the cart
+    function removeItemFromCart(index) {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCart();
+    }
+
+    // Function to update the cart display
+    function updateCart() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const cartItems = document.getElementById("cart-items");
+      cartItems.innerHTML = "";
+
+      let total = 0;
+      for (let i = 0; i < cart.length; i++) {
+        const item = cart[i];
+        const li = document.createElement("li");
+        li.textContent = `${item.name} - $${item.price}`;
+        const removeButton = document.createElement("button");
+        removeButton.textContent = "Remove";
+        removeButton.addEventListener("click", () => removeItemFromCart(i));
+        li.appendChild(removeButton);
+        cartItems.appendChild(li);
+        total += item.price;
+      }
+
+      // Display the total price
+      const totalPrice = document.createElement("p");
+      totalPrice.textContent = `Total: $${total}`;
+      cartItems.appendChild(totalPrice);
+    }
+
+    // Initialize the cart and update its display
+    updateCart();
+
+    // Add click event listeners to the product items
+    const productItems = document.querySelectorAll("#products li");
+    productItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        const name = item.getAttribute("data-name");
+        const price = parseFloat(item.getAttribute("data-price"));
+        addItemToCart(name, price);
+      });
+    });
+  </script>
 </body>
-
 </html>
